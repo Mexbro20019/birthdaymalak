@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Happy Birthday Malak</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #050008;
+    font-family: Arial, Tahoma, sans-serif;
+}
+
+canvas {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+
+
+/* الرقم والكيكة */
+
+.age {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+
+    transform:
+        translate(-50%, -50%)
+        scale(0);
+
+    opacity: 0;
+
+    z-index: 10;
+
+    text-align: center;
+
+    color: white;
+
+    font-size:
+        clamp(70px, 20vw, 150px);
+
+    font-weight: bold;
+
+    text-shadow:
+        0 0 10px #ff4d88,
+        0 0 25px #ff1493,
+        0 0 50px #ff1493;
+
+    transition:
+        transform 1s ease,
+        opacity 1s ease;
+}
+
+.age.show {
+    transform:
+        translate(-50%, -50%)
+        scale(1);
+
+    opacity: 1;
+}
+
+.cake {
+    display: block;
+
+    font-size:
+        clamp(55px, 15vw, 100px);
+
+    margin-top: 10px;
+}
+
+
+/* الرسالة النهائية */
+
+.final-message {
+
+    position: fixed;
+
+    left: 50%;
+    top: 50%;
+
+    transform:
+        translate(-50%, -50%)
+        scale(0.5);
+
+    width: 92%;
+
+    max-width: 700px;
+
+    text-align: center;
+
+    color: white;
+
+    opacity: 0;
+
+    z-index: 20;
+
+    transition:
+        opacity 1.5s ease,
+        transform 1.5s ease;
+}
+
+.final-message.show {
+
+    opacity: 1;
+
+    transform:
+        translate(-50%, -50%)
+        scale(1);
+}
+
+.final-message h1 {
+
+    margin: 0 0 25px;
+
+    font-size:
+        clamp(30px, 8vw, 60px);
+
+    color: #ffb6d9;
+
+    text-shadow:
+        0 0 10px #ff4d88,
+        0 0 25px #ff1493,
+        0 0 45px #ff1493;
+}
+
+.final-message p {
+
+    margin: 0;
+
+    font-size:
+        clamp(20px, 5vw, 34px);
+
+    line-height: 1.8;
+
+    color: white;
+
+    text-shadow:
+        0 0 8px #ff4d88,
+        0 0 20px #ff1493;
+}
+
+
+/* الورود */
+
+.flower {
+
+    position: fixed;
+
+    pointer-events: none;
+
+    z-index: 5;
+
+    font-size: 25px;
+
+    animation:
+        flowerFloat 6s linear forwards;
+}
+
+@keyframes flowerFloat {
+
+    0% {
+
+        transform:
+            translateY(0)
+            rotate(0deg)
+            scale(0.6);
+
+        opacity: 0;
+    }
+
+    15% {
+        opacity: 1;
+    }
+
+    100% {
+
+        transform:
+            translateY(-110vh)
+            rotate(360deg)
+            scale(1.5);
+
+        opacity: 0;
+    }
+}
+
+
+/* الشموع */
+
+.candle {
+
+    position: fixed;
+
+    pointer-events: none;
+
+    z-index: 4;
+
+    font-size: 25px;
+
+    animation:
+        candleFloat 7s linear forwards;
+}
+
+@keyframes candleFloat {
+
+    0% {
+
+        transform:
+            translateY(0)
+            rotate(-5deg);
+
+        opacity: 0;
+    }
+
+    15% {
+        opacity: 1;
+    }
+
+    50% {
+
+        transform:
+            translateY(-50vh)
+            rotate(5deg);
+    }
+
+    100% {
+
+        transform:
+            translateY(-110vh)
+            rotate(-5deg);
+
+        opacity: 0;
+    }
+}
+
+</style>
+
+</head>
+
+<body>
+
+
+<canvas id="canvas"></canvas>
+
+
+<!-- العمر -->
+
+<div class="age" id="age">
+
+    15
+
+    <span class="cake">
+        🎂
+    </span>
+
+</div>
+
+
+<!-- الرسالة النهائية -->
+
+<div
+    class="final-message"
+    id="finalMessage"
+>
+
+    <h1>
+        كل سنه وانتي طيبه يا ملوكتي ❤️‍🩹♥️
+    </h1>
+
+    <p>
+
+        وعقبال سنين كتير تكوني كويسه
+
+        <br>
+
+        ودايمًا بتمنالك الأحسن ❤️‍🩹♥️
+
+    </p>
+
+</div>
+
+
+<script>
+
+
+const canvas =
+    document.getElementById("canvas");
+
+const ctx =
+    canvas.getContext("2d");
+
+let width;
+let height;
+
+
+function resize() {
+
+    width =
+        window.innerWidth;
+
+    height =
+        window.innerHeight;
+
+    canvas.width =
+        width *
+        devicePixelRatio;
+
+    canvas.height =
+        height *
+        devicePixelRatio;
+
+    canvas.style.width =
+        width + "px";
+
+    canvas.style.height =
+        height + "px";
+
+    ctx.setTransform(
+
+        devicePixelRatio,
+        0,
+        0,
+        devicePixelRatio,
+        0,
+        0
+
+    );
+}
+
+
+resize();
+
+window.addEventListener(
+    "resize",
+    resize
+);
+
+
+/* عناصر القلب */
+
+const objects = [];
+
+
+/* شكل القلب */
+
+function heartPoint(t) {
+
+    const x =
+        16 *
+        Math.pow(
+            Math.sin(t),
+            3
+        );
+
+    const y =
+        13 * Math.cos(t)
+        - 5 * Math.cos(2 * t)
+        - 2 * Math.cos(3 * t)
+        - Math.cos(4 * t);
+
+    return {
+        x: x,
+        y: -y
+    };
+}
+
+
+/* إنشاء الورود والشموع */
+
+const count = 90;
+
+
+for (let i = 0; i < count; i++) {
+
+    const t =
+        Math.random() *
+        Math.PI *
+        2;
+
+    const point =
+        heartPoint(t);
+
+    const scale =
+        7 +
+        Math.random() * 0.7;
+
+    objects.push({
+
+        startX:
+            Math.random() *
+            width,
+
+        startY:
+            Math.random() *
+            height,
+
+        targetX:
+            width / 2 +
+            point.x * scale,
+
+        targetY:
+            height / 2 +
+            point.y * scale,
+
+        type:
+            Math.random() > 0.25
+            ? "flower"
+            : "candle",
+
+        rotation:
+            Math.random() *
+            Math.PI *
+            2,
+
+        size:
+            18 +
+            Math.random() *
+            15
+
+    });
+}
+
+
+/* خلفية متحركة */
+
+const backgroundFlowers = [];
+
+for (let i = 0; i < 35; i++) {
+
+    backgroundFlowers.push({
+
+        x:
+            Math.random() *
+            width,
+
+        y:
+            Math.random() *
+            height,
+
+        speed:
+            0.2 +
+            Math.random() *
+            0.7,
+
+        size:
+            18 +
+            Math.random() *
+            20,
+
+        rotation:
+            Math.random() *
+            360
+
+    });
+}
+
+
+const backgroundCandles = [];
+
+for (let i = 0; i < 15; i++) {
+
+    backgroundCandles.push({
+
+        x:
+            Math.random() *
+            width,
+
+        y:
+            Math.random() *
+            height,
+
+        speed:
+            0.15 +
+            Math.random() *
+            0.5,
+
+        size:
+            18 +
+            Math.random() *
+            15
+
+    });
+}
+
+
+/* بداية الحركة */
+
+const startTime =
+    performance.now();
+
+
+function animate(now) {
+
+    const elapsed =
+        (now - startTime) /
+        1000;
+
+
+    ctx.clearRect(
+        0,
+        0,
+        width,
+        height
+    );
+
+
+    /*
+       خلفية الورود
+    */
+
+    for (const f of backgroundFlowers) {
+
+        f.y -= f.speed;
+
+        f.rotation += 0.3;
+
+        if (f.y < -50) {
+
+            f.y =
+                height + 50;
+        }
+
+        ctx.save();
+
+        ctx.translate(
+            f.x,
+            f.y
+        );
+
+        ctx.rotate(
+            f.rotation *
+            Math.PI / 180
+        );
+
+        ctx.font =
+            f.size + "px Arial";
+
+        ctx.globalAlpha =
+            0.65;
+
+        ctx.fillText(
+            "🌹",
+            0,
+            0
+        );
+
+        ctx.restore();
+    }
+
+
+    /*
+       خلفية الشموع
+    */
+
+    for (const c of backgroundCandles) {
+
+        c.y -= c.speed;
+
+        if (c.y < -50) {
+
+            c.y =
+                height + 50;
+        }
+
+        ctx.font =
+            c.size + "px Arial";
+
+        ctx.globalAlpha =
+            0.55;
+
+        ctx.fillText(
+            "🕯️",
+            c.x,
+            c.y
+        );
+    }
+
+
+    ctx.globalAlpha = 1;
+
+
+    /*
+       تكوين القلب خلال 3 ثواني
+    */
+
+    if (elapsed < 5.5) {
+
+        let progress =
+            Math.min(
+
+                Math.max(
+                    (elapsed - 0.3) /
+                    2.7,
+                    0
+                ),
+
+                1
+
+            );
+
+
+        progress =
+            1 -
+            Math.pow(
+                1 - progress,
+                3
+            );
+
+
+        for (const obj of objects) {
+
+            const x =
+                obj.startX +
+                (
+                    obj.targetX -
+                    obj.startX
+                ) *
+                progress;
+
+
+            const y =
+                obj.startY +
+                (
+                    obj.targetY -
+                    obj.startY
+                ) *
+                progress;
+
+
+            ctx.save();
+
+
+            ctx.translate(
+                x,
+                y
+            );
+
+
+            ctx.rotate(
+                obj.rotation
+            );
+
+
+            ctx.font =
+                obj.size + "px Arial";
+
+
+            if (
+                obj.type ===
+                "flower"
+            ) {
+
+                ctx.fillText(
+                    "🌹",
+                    0,
+                    0
+                );
+
+            } else {
+
+                ctx.fillText(
+                    "🕯️",
+                    0,
+                    0
+                );
+            }
+
+
+            ctx.restore();
+        }
+    }
+
+
+    /*
+       إظهار 15 والكيكة
+    */
+
+    if (
+        elapsed >= 3 &&
+        elapsed < 5.5
+    ) {
+
+        document
+            .getElementById(
+                "age"
+            )
+            .classList.add(
+                "show"
+            );
+    }
+
+
+    /*
+       إخفاء العمر
+       وإظهار الرسالة
+    */
+
+    if (elapsed >= 5.5) {
+
+        document
+            .getElementById(
+                "age"
+            )
+            .classList.remove(
+                "show"
+            );
+
+
+        document
+            .getElementById(
+                "finalMessage"
+            )
+            .classList.add(
+                "show"
+            );
+    }
+
+
+    requestAnimationFrame(
+        animate
+    );
+}
+
+
+requestAnimationFrame(
+    animate
+);
+
+
+/*
+   ورود إضافية
+*/
+
+setInterval(() => {
+
+    const flower =
+        document.createElement(
+            "div"
+        );
+
+    flower.className =
+        "flower";
+
+    flower.textContent =
+        [
+            "🌹",
+            "🌷",
+            "🌸",
+            "🌺"
+        ][
+            Math.floor(
+                Math.random() * 4
+            )
+        ];
+
+
+    flower.style.left =
+        Math.random() *
+        100 +
+        "vw";
+
+
+    flower.style.bottom =
+        "-50px";
+
+
+    flower.style.fontSize =
+        18 +
+        Math.random() * 30 +
+        "px";
+
+
+    document.body.appendChild(
+        flower
+    );
+
+
+    setTimeout(() => {
+
+        flower.remove();
+
+    }, 7000);
+
+}, 300);
+
+
+/*
+   شموع إضافية
+*/
+
+setInterval(() => {
+
+    const candle =
+        document.createElement(
+            "div"
+        );
+
+    candle.className =
+        "candle";
+
+    candle.textContent =
+        "🕯️";
+
+
+    candle.style.left =
+        Math.random() *
+        100 +
+        "vw";
+
+
+    candle.style.bottom =
+        "-50px";
+
+
+    candle.style.fontSize =
+        18 +
+        Math.random() * 25 +
+        "px";
+
+
+    document.body.appendChild(
+        candle
+    );
+
+
+    setTimeout(() => {
+
+        candle.remove();
+
+    }, 8000);
+
+}, 700);
+
+
+</script>
+
+</body>
+</html>
